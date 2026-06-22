@@ -20,29 +20,29 @@ export default function App() {
     <div className="bg-background text-on-background font-body-md overflow-x-hidden min-h-screen">
       {/* TopAppBar */}
       <nav
-        className={`fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md transition-all duration-300 ${
+        className={`fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-all duration-300 ${
           scrolled ? 'py-2 shadow-md' : 'py-4 shadow-sm'
         }`}
       >
         <div className="flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
-          <span className="font-display-lg text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">
+          <span className="font-display-lg text-headline-md text-primary tracking-tight">
             The Bloom Archive
           </span>
           <div className="flex items-center space-x-8">
             <a
-              className="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300 font-label-sm"
+              className="text-on-surface-variant hover:text-primary transition-colors duration-300 font-label-sm"
               href="#story"
             >
               The Family
             </a>
             <a
-              className="text-primary dark:text-primary-fixed-dim border-b-2 border-primary pb-1 font-label-sm"
+              className="text-primary border-b-2 border-primary pb-1 font-label-sm"
               href="#gallery"
             >
               Memories
             </a>
             <a
-              className="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300 font-label-sm"
+              className="text-on-surface-variant hover:text-primary transition-colors duration-300 font-label-sm"
               href="#values"
             >
               Legacy
