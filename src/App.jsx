@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [scrolled, setScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState('gallery')
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
+  
+  const navRefs = useRef({})
+  const navItems = [
+    { id: 'story', label: 'The Family' },
+    { id: 'gallery', label: 'Memories' },
+    { id: 'values', label: 'Legacy' }
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +25,61 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-40% 0px -50% 0px',
+      threshold: 0
+    }
+
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id)
+        }
+      })
+    }
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions)
+    
+    navItems.forEach((item) => {
+      const el = document.getElementById(item.id)
+      if (el) observer.observe(el)
+    })
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    const activeEl = navRefs.current[activeSection]
+    if (activeEl) {
+      setIndicatorStyle({
+        left: activeEl.offsetLeft,
+        width: activeEl.offsetWidth
+      })
+    }
+  }, [activeSection])
+
+  const handleNavClick = (e, id) => {
+    e.preventDefault()
+    const element = document.getElementById(id)
+    if (element) {
+      const offset = 80
+      const bodyRect = document.body.getBoundingClientRect().top
+      const elementRect = element.getBoundingClientRect().top
+      const elementPosition = elementRect - bodyRect
+      const offsetPosition = elementPosition - offset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+    setActiveSection(id)
+  }
+
   return (
     <div className="bg-background text-on-background font-body-md overflow-x-hidden min-h-screen">
       {/* TopAppBar */}
@@ -28,25 +92,30 @@ export default function App() {
           <span className="font-display-lg text-headline-md text-primary tracking-tight">
             The Bloom Archive
           </span>
-          <div className="flex items-center space-x-8">
-            <a
-              className="text-on-surface-variant hover:text-primary transition-colors duration-300 font-label-sm"
-              href="#story"
-            >
-              The Family
-            </a>
-            <a
-              className="text-primary border-b-2 border-primary pb-1 font-label-sm"
-              href="#gallery"
-            >
-              Memories
-            </a>
-            <a
-              className="text-on-surface-variant hover:text-primary transition-colors duration-300 font-label-sm"
-              href="#values"
-            >
-              Legacy
-            </a>
+          <div className="relative flex items-center space-x-8">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                ref={(el) => (navRefs.current[item.id] = el)}
+                className={`transition-colors duration-300 font-label-sm pb-1 relative z-10 ${
+                  activeSection === item.id
+                    ? 'text-primary font-semibold'
+                    : 'text-on-surface-variant hover:text-primary'
+                }`}
+                href={`#${item.id}`}
+                onClick={(e) => handleNavClick(e, item.id)}
+              >
+                {item.label}
+              </a>
+            ))}
+            {/* Sliding Underline */}
+            <div
+              className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300 ease-out"
+              style={{
+                left: `${indicatorStyle.left}px`,
+                width: `${indicatorStyle.width}px`
+              }}
+            />
           </div>
         </div>
       </nav>
